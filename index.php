@@ -1,19 +1,45 @@
-<?php get_header(); ?>
+<?php
+/**
+ * The site's entry point.
+ *
+ * Loads the relevant template part,
+ * the loop is executed (when needed) by the relevant template part.
+ *
+ * @package Layno
+ */
 
-<main class="container mx-auto px-4 py-8">
-  <?php if ( have_posts() ) : ?>
-    <?php while ( have_posts() ) : the_post(); ?>
-      <article <?php post_class('mb-8'); ?>>
-        <h2 class="text-2xl font-bold mb-2"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-        <div class="text-gray-700">
-          <?php the_excerpt(); ?>
-        </div>
-      </article>
-    <?php endwhile; ?>
-    <?php the_posts_pagination(); ?>
-  <?php else: ?>
-    <p><?php _e('هیچ محتوایی پیدا نشد.', 'my-simple-tailwind'); ?></p>
-  <?php endif; ?>
-</main>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
-<?php get_footer(); ?>
+get_header();
+
+$is_elementor_theme_exist = function_exists( 'elementor_theme_do_location' );
+
+if(is_search() ) {
+    if ( ! $is_elementor_theme_exist || ! elementor_theme_do_location( 'archive' ) ) {
+        get_template_part( 'template-parts/search' );
+    }
+} elseif ( is_singular('post') ) {
+	if ( ! $is_elementor_theme_exist || ! elementor_theme_do_location( 'single' ) ) {
+		get_template_part( 'template-parts/single' );
+	}
+} elseif ( is_singular('page') ) {
+    if (!$is_elementor_theme_exist || !elementor_theme_do_location('single')) {
+        get_template_part('template-parts/page');
+    }
+} elseif (is_singular()) {
+    get_template_part('post-types/single-'.get_post_type());
+} elseif (is_post_type_archive()) {
+    get_template_part('post-types/archive-'.get_post_type());
+} elseif ( is_archive() || is_home() ) {
+    if (!$is_elementor_theme_exist || !elementor_theme_do_location('archive')) {
+        get_template_part('template-parts/archive');
+    }
+} else {
+	if ( ! $is_elementor_theme_exist || ! elementor_theme_do_location( 'single' ) ) {
+		get_template_part( 'template-parts/404' );
+	}
+}
+
+get_footer();
