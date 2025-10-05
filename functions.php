@@ -23,3 +23,11 @@ function mst_enqueue_assets() {
     wp_enqueue_script('mst-main', get_template_directory_uri() . '/assets/js/main.js', array(), file_exists($js_file) ? filemtime($js_file) : null, true);
 }
 add_action('wp_enqueue_scripts','mst_enqueue_assets');
+
+
+define("DIRECTORY_URI",get_template_directory_uri());
+var_dump(DIRECTORY_URI);
+
+function layno_register_style(){
+    wp_enqueue_style("layno-stylesheet");
+};
